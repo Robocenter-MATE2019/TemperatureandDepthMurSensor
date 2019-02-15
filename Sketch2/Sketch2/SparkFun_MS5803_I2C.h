@@ -86,6 +86,7 @@ private:
 	int64_t OFF, SENS;
 
 	bool get_temp = true;
+	bool isSent = false;
 
 	ms5803_addr _address; 		// Variable used to store I2C device address.
 	uint16_t coefficient[8];// Coefficients;

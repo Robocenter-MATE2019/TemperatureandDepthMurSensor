@@ -165,6 +165,7 @@ void MS5803::getMeasurements(precision _precision)
 		int32_t pressure_raw = getADCconversion(PRESSURE, _precision);
 		pressure_calc = (((SENS * pressure_raw) / 2097152) - OFF) / 32768;
 		_pressure_actual = pressure_calc; // 10;// pressure_calc;
+		get_temp = true;
 	}
 
 }
@@ -175,8 +176,10 @@ uint32_t MS5803::getADCconversion(measurement _measurement, precision _precision
 {
 	uint32_t result = -1;
 	uint8_t highByte = 0, midByte = 0, lowByte = 0;
-
-	sendCommand(CMD_ADC_CONV + _measurement + _precision);
+	if (!isSent) {
+		sendCommand(CMD_ADC_CONV + _measurement + _precision);
+		isSent = true;
+	}
 	if(!timer.is_started()) timer.start();
 
 	// Wait for conversion to complete
