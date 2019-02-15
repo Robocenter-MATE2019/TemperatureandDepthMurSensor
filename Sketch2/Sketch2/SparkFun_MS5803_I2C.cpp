@@ -115,7 +115,7 @@ void MS5803::getMeasurements(precision _precision)
 	if (get_temp)
 	{
 		int32_t temperature_raw = getADCconversion(TEMPERATURE, _precision);
-		if (temperature_raw != -1)
+		if (temperature_raw > -1)
 		{
 			dT = temperature_raw - ((int32_t)coefficient[5] << 8);
 			temp_calc = (((int64_t)dT * coefficient[6]) >> 23) + 2000;
@@ -198,6 +198,7 @@ uint32_t MS5803::getADCconversion(measurement _measurement, precision _precision
 		}
 
 		result = ((uint32_t)highByte << 16) + ((uint32_t)midByte << 8) + lowByte;
+		isSent = false;
 	}
 	return result;
 
