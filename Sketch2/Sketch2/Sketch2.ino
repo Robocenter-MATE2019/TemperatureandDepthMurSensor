@@ -20,6 +20,8 @@ double pressure_abs, pressure_relative, altitude_delta, pressure_baseline;
 // Create Variable to store altitude in (m) for calculations;
 double base_altitude = 1655.0; // Altitude of SparkFun's HQ in Boulder, CO. in (m)
 
+Timer t;
+
 void setup() {
 	Serial.begin(9600);
 	//Retrieve calibration constants for conversion math.
@@ -31,7 +33,7 @@ void setup() {
 }
 
 void loop() {
-
+	t.start();
 	// To measure to higher degrees of precision use the following sensor settings:
 	// ADC_256 
 	// ADC_512 
@@ -45,26 +47,26 @@ void loop() {
 	// Read temperature from the sensor in deg F. Converting
 	// to Fahrenheit is not internal to the sensor.
 	// Additional math is done to convert a Celsius reading.
-	temperature_f = sensor.getTemperature(FAHRENHEIT, ADC_4096);
+	//temperature_f = sensor.getTemperature(FAHRENHEIT, ADC_4096);
 
 	// Read pressure from the sensor in mbar.
-	pressure_abs = sensor.getPressure(ADC_4096);
+	//pressure_abs = sensor.getPressure(ADC_4096);
 
 	// Let's do something interesting with our data.
 
 	// Convert abs pressure with the help of altitude into relative pressure
 	// This is used in Weather stations.
-	pressure_relative = sealevel(pressure_abs, base_altitude);
+	//pressure_relative = sealevel(pressure_abs, base_altitude);
 
 	// Taking our baseline pressure at the beginning we can find an approximate
 	// change in altitude based on the differences in pressure.   
-	altitude_delta = altitude(pressure_abs, pressure_baseline);
+	//altitude_delta = altitude(pressure_abs, pressure_baseline);
 
 	// Report values via UART
 	Serial.print("Temperature C = ");
 	Serial.println(temperature_c);
 
-	Serial.print("Temperature F = ");
+	/*Serial.print("Temperature F = ");
 	Serial.println(temperature_f);
 
 	Serial.print("Pressure abs (mbar)= ");
@@ -75,7 +77,7 @@ void loop() {
 
 	Serial.print("Altitude change (m) = ");
 	Serial.println(altitude_delta);
-
+	Serial.println(t.elapsed());*/
 }
 
 

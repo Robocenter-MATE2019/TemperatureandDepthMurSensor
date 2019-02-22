@@ -114,12 +114,11 @@ void MS5803::getMeasurements(precision _precision)
 
 	if (get_temp)
 	{
-		int32_t temperature_raw = getADCconversion(TEMPERATURE, _precision);
-		if (temperature_raw > -1)
+		uint32_t temperature_raw = getADCconversion(TEMPERATURE, _precision);
+		if (temperature_raw > 0)
 		{
 			dT = temperature_raw - ((int32_t)coefficient[5] << 8);
 			temp_calc = (((int64_t)dT * coefficient[6]) >> 23) + 2000;
-
 			if (temp_calc < 2000)
 				// If temp_calc is below 20.0C
 			{
@@ -162,10 +161,13 @@ void MS5803::getMeasurements(precision _precision)
 	}
 	else
 	{
-		int32_t pressure_raw = getADCconversion(PRESSURE, _precision);
-		pressure_calc = (((SENS * pressure_raw) / 2097152) - OFF) / 32768;
-		_pressure_actual = pressure_calc; // 10;// pressure_calc;
-		get_temp = true;
+		uint32_t pressure_raw = getADCconversion(PRESSURE, _precision);
+		if (pressure_raw > 0)
+		{
+			pressure_calc = (((SENS * pressure_raw) / 2097152) - OFF) / 32768;
+			_pressure_actual = pressure_calc; // 10;// pressure_calc;
+			get_temp = true;
+		}
 	}
 
 }
@@ -174,7 +176,7 @@ uint32_t MS5803::getADCconversion(measurement _measurement, precision _precision
 // Retrieve ADC measurement from the device.  
 // Select measurement type and precision
 {
-	uint32_t result = -1;
+	uint32_t result = 0;
 	uint8_t highByte = 0, midByte = 0, lowByte = 0;
 	if (!isSent) {
 		sendCommand(CMD_ADC_CONV + _measurement + _precision);
@@ -199,6 +201,7 @@ uint32_t MS5803::getADCconversion(measurement _measurement, precision _precision
 
 		result = ((uint32_t)highByte << 16) + ((uint32_t)midByte << 8) + lowByte;
 		isSent = false;
+		timer.stop();
 	}
 	return result;
 
